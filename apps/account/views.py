@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
 
-from apps.account.forms import UserRegistrationForm
+from apps.account.forms import UserRegistrationForm, UserLoginForm
 
 
-class RegisterView(View):
+class UserRegisterView(View):
     form_class = UserRegistrationForm
     template_name = 'account/register.html'
 
@@ -25,4 +26,30 @@ class RegisterView(View):
             User.objects.create_user(username=username, email=email, password=password1)
             messages.success(request, message='you registered successfully', extra_tags='alert-success')
             return redirect('home:home')
+        return render(request, self.template_name, {'form': form})
+
+
+class UserLoginView(View):
+    form_class = UserLoginForm
+    template_name = 'account/login.html'
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            username = cd['username']
+            password = cd['password']
+
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, message='You are now logged in', extra_tags='alert-success')
+                return redirect('home:home')
+
+            messages.error(request, message='Invalid credentials', extra_tags='alert-danger')
+
         return render(request, self.template_name, {'form': form})
