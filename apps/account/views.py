@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 from apps.account.forms import UserRegistrationForm, UserLoginForm
@@ -53,3 +53,10 @@ class UserLoginView(View):
             messages.error(request, message='Invalid credentials', extra_tags='alert-danger')
 
         return render(request, self.template_name, {'form': form})
+
+
+class UserLogOutView(View):
+    def get(self, request):
+        logout(request)
+        messages.success(request, 'You are now logged out', extra_tags='alert-success')
+        return redirect('home:home')
