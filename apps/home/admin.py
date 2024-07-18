@@ -7,3 +7,6 @@ from apps.home.models import Post
 class PostModelAdmin(admin.ModelAdmin):
     list_display = ('user', 'title', 'slug', 'status')
     prepopulated_fields = {'slug': ('title',)}
+    search_fields = ('title', 'body',)
+    list_filter = ('status',)
+    raw_id_fields = ('user',)
