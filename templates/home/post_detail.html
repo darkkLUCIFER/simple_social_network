@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block content %}
-    <h4>{{ post.user }} - {{ post.updated_at|date:'Y M d' }}</h4>
+
+    <h5><a href="{% url 'account:user_profile' post.user.id %}">{{ post.user }}</a> - {{ post.updated_at|date:'Y M d' }}</h5>
     <h1>{{ post.title }}</h1>
     <p>{{ post.body }}</p>
 {% endblock %}
