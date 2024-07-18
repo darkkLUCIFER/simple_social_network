@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.home.models import Post
+
+
+@admin.register(Post)
+class PostModelAdmin(admin.ModelAdmin):
+    list_display = ('user', 'title', 'slug', 'status')
+    prepopulated_fields = {'slug': ('title',)}
