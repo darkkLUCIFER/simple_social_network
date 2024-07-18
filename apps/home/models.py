@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 from apps.utils.base_model import BaseModel
 
@@ -13,6 +14,9 @@ class Post(BaseModel):
 
     def __str__(self):
         return f"{self.user.username} - {self.title}"
+
+    def get_absolute_url(self):
+        return reverse('home:post_detail', kwargs={'post_slug': self.slug, 'post_id': self.pk})
 
     class Meta:
         db_table = 'post'
