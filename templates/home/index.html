@@ -2,5 +2,9 @@
 {% load static %}
 
 {% block content %}
-	<h1>this is the home page</h1>
+    <div class="card">
+        {% for post in posts %}
+            <a href="" class="card-body">{{ post.title|truncatewords:5 }}</a>
+        {% endfor %}
+    </div>
 {% endblock %}
