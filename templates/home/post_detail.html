@@ -2,6 +2,10 @@
 {% load static %}
 
 {% block content %}
+    {% if request.user.id == post.user.id %}
+    	<a href="{% url 'home:post_delete' post.id %}" class="btn btn-danger">Delete</a>
+    {% endif %}
+
 
     <h5><a href="{% url 'account:user_profile' post.user.id %}">{{ post.user }}</a> - {{ post.updated_at|date:'Y M d' }}</h5>
     <h1>{{ post.title }}</h1>
