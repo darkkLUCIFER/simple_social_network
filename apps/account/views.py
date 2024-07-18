@@ -79,4 +79,14 @@ class UserProfileView(LoginRequiredMixin, View):
             user = User.objects.get(pk=user_id)
         except User.DoesNotExist:
             user = None
-        return render(request, 'account/profile.html', {"user": user})
+
+        if user:
+            user_posts = user.posts.all()
+        else:
+            user_posts = None
+
+        context = {
+            'user': user,
+            'user_posts': user_posts
+        }
+        return render(request, 'account/profile.html', context=context)

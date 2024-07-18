@@ -3,4 +3,13 @@
 
 {% block content %}
     <h1 class="text-center">{{ user.username }}</h1>
+
+    <h2>Posts</h2>
+
+    <div class="card">
+        {% for post in user_posts %}
+            <a href="{% url 'home:post_detail' post.id post.slug %}"
+               class="card-body">{{ post.title|truncatewords:5 }}</a>
+        {% endfor %}
+    </div>
 {% endblock %}
