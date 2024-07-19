@@ -5,7 +5,9 @@
     <h1 class="text-center">{{ user.username }}</h1>
 
     <h2>Posts</h2>
-
+    {% if request.user.is_authenticated and request.user.id == user.id %}
+        <h3><a href="{% url 'home:post_create' %}" class="btn btn-primary">New Post</a></h3>
+    {% endif %}
     <div class="card">
         {% for post in user_posts %}
             <a href="{{ post.get_absolute_url }}"

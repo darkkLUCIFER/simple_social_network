@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
+from django.utils.text import slugify
 from django.views import View
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from apps.home.forms import PostUpdateForm
+from apps.home.forms import PostUpdateForm, PostCreateForm
 from apps.home.models import Post
 
 
@@ -78,3 +79,25 @@ class PostUpdateView(LoginRequiredMixin, View):
                 return redirect('home:post_detail', self.post_instance.id, self.post_instance.slug)
         else:
             messages.error(request, 'post does not exist', extra_tags='error')
+
+
+class PostCreateView(LoginRequiredMixin, View):
+    form_class = PostCreateForm
+    template_name = 'home/post_create.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            new_post = form.save(commit=False)
+            new_post.user_id = request.user.id
+            new_post.slug = slugify(cd['title'][:30])
+            new_post.save()
+            messages.success(request, 'Post created successfully', extra_tags='success')
+            return redirect('home:post_detail', post_id=new_post.id, post_slug=new_post.slug)
+        else:
+            messages.error(request, 'Invalid Inputs', extra_tags='error')
