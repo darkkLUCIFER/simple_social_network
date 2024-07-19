@@ -20,5 +20,6 @@ class Post(BaseModel):
 
     class Meta:
         db_table = 'post'
+        ordering = ('-created_at',)
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
