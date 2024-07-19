@@ -9,6 +9,7 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, 
 from django.urls import reverse_lazy
 
 from apps.account.forms import UserRegistrationForm, UserLoginForm
+from apps.account.models import Relation
 
 
 class UserRegisterView(View):
@@ -109,3 +110,18 @@ class UserPasswordResetConfirmView(PasswordResetConfirmView):
 
 class UserPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'account/password_reset_complete.html'
+
+
+class UserFollowView(LoginRequiredMixin, View):
+
+    def setup(self, request, *args, **kwargs):
+        self.user = get_object_or_404(User, pk=kwargs['user_id'])
+
+    def get(self, request, *args, **kwargs):
+        relation = Relation.objects.filter(from_user=request.user, to_user=self.user).exists()
+        if relation:
+            messages.error(request, message='You are already following', extra_tags='danger')
+        else:
+            Relation.objects.create(from_user=request.user.id, to_user=self.user)
+            messages.success(request, message='You followed this user', extra_tags='alert-success')
+        return redirect('account:user_profile', user_id=self.user.id)
