@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.text import slugify
 from django.views import View
 from django.contrib import messages
@@ -21,10 +21,7 @@ class PostDetailView(View):
     template_name = 'home/post_detail.html'
 
     def get(self, request, post_id, post_slug):
-        try:
-            post = Post.objects.get(pk=post_id, slug=post_slug)
-        except Post.DoesNotExist:
-            post = None
+        post = get_object_or_404(Post, pk=post_id, slug=post_slug)
         context = {
             'post': post
         }
@@ -34,7 +31,7 @@ class PostDetailView(View):
 class PostDeleteView(LoginRequiredMixin, View):
     def get(self, request, post_id):
         try:
-            post = Post.objects.get(pk=post_id)
+            post = get_object_or_404(Post, pk=post_id)
             if post.user.id == request.user.id:
                 post.delete()
                 messages.success(request, 'Post deleted successfully', extra_tags='success')
@@ -50,10 +47,7 @@ class PostUpdateView(LoginRequiredMixin, View):
     template_name = 'home/post_update.html'
 
     def setup(self, request, *args, **kwargs):
-        try:
-            self.post_instance = Post.objects.get(pk=kwargs['post_id'])
-        except Post.DoesNotExist:
-            self.post_instance = None
+        self.post_instance = get_object_or_404(Post, pk=kwargs['post_id'])
         return super().setup(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
