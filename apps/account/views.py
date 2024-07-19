@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -75,10 +75,7 @@ class UserLogOutView(LoginRequiredMixin, View):
 
 class UserProfileView(LoginRequiredMixin, View):
     def get(self, request, user_id):
-        try:
-            user = User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            user = None
+        user = get_object_or_404(User, pk=user_id)
 
         if user:
             user_posts = user.posts.all()
