@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.account.models import Relation
+
+
+@admin.register(Relation)
+class RelationModelAdmin(admin.ModelAdmin):
+    list_display = ('from_user', 'to_user')
