@@ -133,3 +133,12 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Default backend
     'apps.account.authenticate.EmailBackend',  # custom email backend
 ]
+
+# email settings
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = '<EMAIL>'
+EMAIL_HOST_PASSWORD = '<PASSWORD>'
+DEFAULT_FROM_EMAIL = 'Sorena'  # it could be anything
