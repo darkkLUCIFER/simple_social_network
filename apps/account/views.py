@@ -125,3 +125,18 @@ class UserFollowView(LoginRequiredMixin, View):
             Relation.objects.create(from_user=request.user.id, to_user=self.user)
             messages.success(request, message='You followed this user', extra_tags='alert-success')
         return redirect('account:user_profile', user_id=self.user.id)
+
+
+class UserUnfollowView(LoginRequiredMixin, View):
+    def setup(self, request, *args, **kwargs):
+        self.user = get_object_or_404(User, pk=kwargs['user_id'])
+
+    def get(self, request, *args, **kwargs):
+        relation = Relation.objects.filter(from_user=request.user, to_user=self.user).exists()
+        if relation:
+            relation.delete()
+            messages.success(request, message='You unfollowed this user', extra_tags='alert-success')
+        else:
+            messages.error(request, message='You are not following this user', extra_tags='danger')
+
+        return redirect('account:user_profile', user_id=self.user.id)
