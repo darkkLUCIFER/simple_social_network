@@ -81,14 +81,17 @@ class UserProfileView(LoginRequiredMixin, View):
     def get(self, request, user_id):
         user = get_object_or_404(User, pk=user_id)
 
-        if user:
-            user_posts = user.posts.all()
-        else:
-            user_posts = None
+        user_posts = user.posts.all()
+
+        is_following = False
+        relation = Relation.objects.filter(from_user=request.user, to_user=user).exists()
+        if relation:
+            is_following = True
 
         context = {
             'user': user,
-            'user_posts': user_posts
+            'user_posts': user_posts,
+            'is_following': is_following,
         }
         return render(request, 'account/profile.html', context=context)
 
@@ -116,13 +119,14 @@ class UserFollowView(LoginRequiredMixin, View):
 
     def setup(self, request, *args, **kwargs):
         self.user = get_object_or_404(User, pk=kwargs['user_id'])
+        return super().setup(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         relation = Relation.objects.filter(from_user=request.user, to_user=self.user).exists()
         if relation:
             messages.error(request, message='You are already following', extra_tags='danger')
         else:
-            Relation.objects.create(from_user=request.user.id, to_user=self.user)
+            Relation.objects.create(from_user=request.user, to_user=self.user)
             messages.success(request, message='You followed this user', extra_tags='alert-success')
         return redirect('account:user_profile', user_id=self.user.id)
 
@@ -130,10 +134,11 @@ class UserFollowView(LoginRequiredMixin, View):
 class UserUnfollowView(LoginRequiredMixin, View):
     def setup(self, request, *args, **kwargs):
         self.user = get_object_or_404(User, pk=kwargs['user_id'])
+        return super().setup(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        relation = Relation.objects.filter(from_user=request.user, to_user=self.user).exists()
-        if relation:
+        relation = Relation.objects.filter(from_user=request.user, to_user=self.user)
+        if relation.exists():
             relation.delete()
             messages.success(request, message='You unfollowed this user', extra_tags='alert-success')
         else:

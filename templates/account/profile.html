@@ -8,6 +8,13 @@
     {% if request.user.is_authenticated and request.user.id == user.id %}
         <h3><a href="{% url 'home:post_create' %}" class="btn btn-primary">New Post</a></h3>
     {% endif %}
+
+    {% if request.user.is_authenticated and request.user.id != user.id and not is_following %}
+        <a class="btn btn-primary" href="{% url 'account:user_follow' user.id %}">Follow</a>
+    {% elif request.user.is_authenticated and request.user.id != user.id and is_following %}
+        <a class="btn btn-danger" href="{% url 'account:user_unfollow' user.id %}">Unfollow</a>
+    {% endif %}
+
     <div class="card">
         {% for post in user_posts %}
             <a href="{{ post.get_absolute_url }}"
