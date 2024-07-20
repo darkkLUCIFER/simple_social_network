@@ -43,6 +43,10 @@ class UserLoginView(View):
     form_class = UserLoginForm
     template_name = 'account/login.html'
 
+    def setup(self, request, *args, **kwargs):
+        self.next = request.GET.get('next')
+        return super().setup(request, *args, **kwargs)
+
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('home:home')
@@ -63,7 +67,10 @@ class UserLoginView(View):
             if user is not None:
                 login(request, user)
                 messages.success(request, message='You are now logged in', extra_tags='alert-success')
-                return redirect('home:home')
+                if self.next:
+                    return redirect(self.next)
+                else:
+                    return redirect('home:home')
 
             messages.error(request, message='Invalid credentials', extra_tags='alert-danger')
 
