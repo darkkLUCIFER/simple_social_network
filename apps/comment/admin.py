@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.comment.models import Comment
+
+
+@admin.register(Comment)
+class CommentModelAdmin(admin.ModelAdmin):
+    list_display = ('user', 'post', 'is_reply',)
+    list_filter = ('is_reply',)
