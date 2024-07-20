@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.home.urls', namespace='home')),
     path('account/', include('apps.account.urls', namespace='account')),
+    path('comment/', include('apps.comment.urls', namespace='comment')),
 ]
