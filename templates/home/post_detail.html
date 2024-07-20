@@ -12,4 +12,17 @@
     </h5>
     <h1>{{ post.title }}</h1>
     <p>{{ post.body }}</p>
+    <hr>
+    <h4>comments</h4>
+
+    {% for comment in post_comments %}
+        <div class="card bg-dark text-white">
+            <p class="card-header"> {{ comment.user }} | {{ comment.created_at|timesince }}</p>
+            <p class="card-body">{{ comment.body }}</p>
+        </div>
+    {% empty %}
+        <p>No comments yet!</p>
+    {% endfor %}
+
+
 {% endblock %}

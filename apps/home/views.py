@@ -22,8 +22,10 @@ class PostDetailView(View):
 
     def get(self, request, post_id, post_slug):
         post = get_object_or_404(Post, pk=post_id, slug=post_slug)
+        post_comments = post.comments.filter(is_reply=False)
         context = {
-            'post': post
+            'post': post,
+            'post_comments': post_comments,
         }
         return render(request, self.template_name, context)
 
