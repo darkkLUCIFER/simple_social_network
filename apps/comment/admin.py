@@ -7,3 +7,4 @@ from apps.comment.models import Comment
 class CommentModelAdmin(admin.ModelAdmin):
     list_display = ('user', 'post', 'is_reply',)
     list_filter = ('is_reply',)
+    raw_id_fields = ('user', 'post', 'reply')
