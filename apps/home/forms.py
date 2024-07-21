@@ -13,3 +13,7 @@ class PostCreateForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'body']
+
+
+class PostSearchForm(forms.Form):
+    search = forms.CharField(label='Search')

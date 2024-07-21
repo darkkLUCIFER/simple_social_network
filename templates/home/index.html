@@ -2,6 +2,12 @@
 {% load static %}
 
 {% block content %}
+    <form action="" method="get" novalidate>
+        {{ form.as_p }}
+        <input type="submit" value="Search">
+    </form>
+    <br>
+
     <div class="card">
         {% for post in posts %}
             <a href="{{ post.get_absolute_url }}"

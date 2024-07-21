@@ -7,16 +7,23 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from apps.comment.forms import CreateCommentForm
-from apps.home.forms import PostUpdateForm, PostCreateForm
+from apps.home.forms import PostUpdateForm, PostCreateForm, PostSearchForm
 from apps.home.models import Post, Vote
 
 
 class HomeView(View):
     template_name = 'home/index.html'
+    form_class = PostSearchForm
 
     def get(self, request):
         posts = Post.objects.all()
-        context = {'posts': posts}
+        search = request.GET.get('search')
+        if search:
+            posts = posts.filter(title__icontains=search)
+        context = {
+            'posts': posts,
+            'form': self.form_class,
+        }
         return render(request, self.template_name, context)
 
 
