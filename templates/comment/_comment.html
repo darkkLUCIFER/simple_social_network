@@ -1,0 +1,11 @@
+<div class="card bg-dark text-white">
+    <p class="card-header"> {{ comment.user }} | {{ comment.created_at|timesince }}</p>
+    <p class="card-body">{{ comment.body }}</p>
+    {% with replies=comment.replies.all %}
+        {% for reply in replies %}
+            <div class="bg-primary p-3 m-2">
+                {% include "comment/_comment.html" with comment=reply %}
+            </div>
+        {% endfor %}
+    {% endwith %}
+</div>

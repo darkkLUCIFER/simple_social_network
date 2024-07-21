@@ -22,6 +22,7 @@
     {% else %}
         <p class="alert alert-danger">Only Logged in users can comment</p>
     {% endif %}
+    <br>
 
     <hr>
     <h4>comments</h4>
@@ -30,7 +31,10 @@
         <div class="card bg-dark text-white">
             <p class="card-header"> {{ comment.user }} | {{ comment.created_at|timesince }}</p>
             <p class="card-body">{{ comment.body }}</p>
+            {% include "comment/_comment.html" with comment=comment %}
+
         </div>
+        <br>
     {% empty %}
         <p>No comments yet!</p>
     {% endfor %}
