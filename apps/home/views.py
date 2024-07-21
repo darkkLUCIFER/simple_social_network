@@ -31,11 +31,18 @@ class PostDetailView(View):
 
     def get(self, request, *args, **kwargs):
         post_comments = self.post_instance.comments.filter(is_reply=False)
+
+        # check user can like or not
+        can_like = False
+        if request.user.is_authenticated and self.post_instance.user_can_like(request.user):
+            can_like = True
+
         context = {
             'post': self.post_instance,
             'post_comments': post_comments,
             'create_comment_form': self.form_class(),
             'reply_comment_form': self.form_class_reply(),
+            'can_like': can_like,
         }
         return render(request, self.template_name, context)
 

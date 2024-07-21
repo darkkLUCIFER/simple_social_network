@@ -21,6 +21,15 @@ class Post(BaseModel):
     def likes_count(self):
         return self.votes.count()
 
+    def user_can_like(self, user):
+        """
+            Check if user can like this post or not
+        """
+        user_like = user.votes.filter(post=self)
+        if user_like.exists():
+            return False
+        return True
+
     class Meta:
         db_table = 'post'
         ordering = ('-created_at',)
