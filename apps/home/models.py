@@ -23,3 +23,16 @@ class Post(BaseModel):
         ordering = ('-created_at',)
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
+
+
+class Vote(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='votes', verbose_name='Vote')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='votes', verbose_name='Post')
+
+    def __str__(self):
+        return f'{self.user} voted on {self.post.slug}'
+
+    class Meta:
+        db_table = 'vote'
+        verbose_name = 'Vote'
+        verbose_name_plural = 'Votes'
