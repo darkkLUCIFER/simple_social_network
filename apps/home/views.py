@@ -23,6 +23,7 @@ class HomeView(View):
 class PostDetailView(View):
     template_name = 'home/post_detail.html'
     form_class = CreateCommentForm
+    form_class_reply = CreateCommentForm
 
     def setup(self, request, *args, **kwargs):
         self.post_instance = get_object_or_404(Post, pk=kwargs['post_id'], slug=kwargs['post_slug'])
@@ -33,7 +34,8 @@ class PostDetailView(View):
         context = {
             'post': self.post_instance,
             'post_comments': post_comments,
-            'create_comment_form': self.form_class()
+            'create_comment_form': self.form_class(),
+            'reply_comment_form': self.form_class_reply(),
         }
         return render(request, self.template_name, context)
 
