@@ -1,9 +1,12 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.text import slugify
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from apps.comment.forms import CreateCommentForm
 from apps.home.forms import PostUpdateForm, PostCreateForm
 from apps.home.models import Post
 
@@ -19,15 +22,31 @@ class HomeView(View):
 
 class PostDetailView(View):
     template_name = 'home/post_detail.html'
+    form_class = CreateCommentForm
 
-    def get(self, request, post_id, post_slug):
-        post = get_object_or_404(Post, pk=post_id, slug=post_slug)
-        post_comments = post.comments.filter(is_reply=False)
+    def setup(self, request, *args, **kwargs):
+        self.post_instance = get_object_or_404(Post, pk=kwargs['post_id'], slug=kwargs['post_slug'])
+        return super().setup(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        post_comments = self.post_instance.comments.filter(is_reply=False)
         context = {
-            'post': post,
+            'post': self.post_instance,
             'post_comments': post_comments,
+            'create_comment_form': self.form_class()
         }
         return render(request, self.template_name, context)
+
+    @method_decorator(login_required)
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            new_comment = form.save(commit=False)
+            new_comment.user = request.user
+            new_comment.post = self.post_instance
+            new_comment.save()
+            messages.success(request, 'Your comment submitted successfully', extra_tags='alert-success')
+            return redirect('home:post_detail', post_slug=self.post_instance.slug, post_id=self.post_instance.id)
 
 
 class PostDeleteView(LoginRequiredMixin, View):

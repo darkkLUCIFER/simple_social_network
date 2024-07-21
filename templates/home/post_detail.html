@@ -12,6 +12,17 @@
     </h5>
     <h1>{{ post.title }}</h1>
     <p>{{ post.body }}</p>
+
+    {% if request.user.is_authenticated %}
+        <form method="post">
+            {% csrf_token %}
+            {{ create_comment_form.as_p }}
+            <input type="submit" value="Send">
+        </form>
+    {% else %}
+        <p class="alert alert-danger">Only Logged in users can comment</p>
+    {% endif %}
+
     <hr>
     <h4>comments</h4>
 
