@@ -31,6 +31,13 @@
         <div class="card bg-dark text-white">
             <p class="card-header"> {{ comment.user }} | {{ comment.created_at|timesince }}</p>
             <p class="card-body">{{ comment.body }}</p>
+            {% if request.user.is_authenticated %}
+                <form action="{% url 'comment:reply_comment' post.id comment.id %}" method="post">
+                    {% csrf_token %}
+                    {{ reply_comment_form.as_p }}
+                    <input type="submit" value="Send Reply">
+                </form>
+            {% endif %}
             {% include "comment/_comment.html" with comment=comment %}
 
         </div>
