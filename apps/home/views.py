@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from apps.comment.forms import CreateCommentForm
 from apps.home.forms import PostUpdateForm, PostCreateForm
-from apps.home.models import Post
+from apps.home.models import Post, Vote
 
 
 class HomeView(View):
@@ -118,3 +118,15 @@ class PostCreateView(LoginRequiredMixin, View):
             return redirect('home:post_detail', post_id=new_post.id, post_slug=new_post.slug)
         else:
             messages.error(request, 'Invalid Inputs', extra_tags='error')
+
+
+class PostLikeView(LoginRequiredMixin, View):
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        like = Vote.objects.filter(post=post, user=request.user.id)
+        if like.exists():
+            messages.error(request, 'You have already liked this post', extra_tags='danger')
+        else:
+            Vote.objects.create(post=post, user=request.user)
+            messages.success(request, 'Post liked successfully', extra_tags='success')
+        return redirect('home:post_detail', post_id=post.id, post_slug=post.slug)
