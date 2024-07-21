@@ -18,6 +18,9 @@ class Post(BaseModel):
     def get_absolute_url(self):
         return reverse('home:post_detail', kwargs={'post_slug': self.slug, 'post_id': self.pk})
 
+    def likes_count(self):
+        return self.votes.count()
+
     class Meta:
         db_table = 'post'
         ordering = ('-created_at',)
