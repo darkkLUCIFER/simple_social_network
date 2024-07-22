@@ -15,3 +15,17 @@ class Relation(BaseModel):
         db_table = 'relation'
         verbose_name = 'Relation'
         verbose_name_plural = 'Relations'
+
+
+class Profile(BaseModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    age = models.PositiveSmallIntegerField(default=0, verbose_name='Age')
+    bio = models.TextField(null=True, blank=True, verbose_name='Bio')
+
+    def __str__(self):
+        return f'{self.user}'
+
+    class Meta:
+        db_table = 'profile'
+        verbose_name = 'Profile'
+        verbose_name_plural = 'Profiles'
