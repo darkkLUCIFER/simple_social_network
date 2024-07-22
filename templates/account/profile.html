@@ -7,6 +7,7 @@
     <h2>Posts</h2>
     {% if request.user.is_authenticated and request.user.id == user.id %}
         <h3><a href="{% url 'home:post_create' %}" class="btn btn-primary">New Post</a></h3>
+        <a href="{% url 'account:edit_user' %}" class="btn btn-info">Edit Profile</a>
     {% endif %}
 
     {% if request.user.is_authenticated and request.user.id != user.id and not is_following %}

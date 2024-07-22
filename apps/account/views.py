@@ -8,7 +8,7 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, 
     PasswordResetCompleteView
 from django.urls import reverse_lazy
 
-from apps.account.forms import UserRegistrationForm, UserLoginForm
+from apps.account.forms import UserRegistrationForm, UserLoginForm, EditUserForm
 from apps.account.models import Relation
 
 
@@ -152,3 +152,25 @@ class UserUnfollowView(LoginRequiredMixin, View):
             messages.error(request, message='You are not following this user', extra_tags='danger')
 
         return redirect('account:user_profile', user_id=self.user.id)
+
+
+class EditUserView(LoginRequiredMixin, View):
+    form_class = EditUserForm
+    template_name = 'account/edit_profile.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(instance=request.user.profile, initial={'email': request.user.email})
+        context = {
+            'form': form
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, instance=request.user.profile)
+        if form.is_valid():
+            cd = form.cleaned_data
+            form.save()
+            request.user.email = cd['email']
+            request.user.save()
+            messages.success(request, message='Your account has been updated', extra_tags='alert-success')
+        return redirect('account:user_profile', user_id=request.user.id)

@@ -2,6 +2,8 @@ from django import forms
 from django.core.validators import ValidationError
 from django.contrib.auth.models import User
 
+from apps.account.models import Profile
+
 
 class UserRegistrationForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label="Username")
@@ -40,3 +42,11 @@ class UserRegistrationForm(forms.Form):
 class UserLoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+
+class EditUserForm(forms.ModelForm):
+    email = forms.EmailField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Profile
+        fields = ('age', 'bio')
